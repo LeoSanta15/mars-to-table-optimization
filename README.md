@@ -113,7 +113,7 @@ Google Colab
 
 Run the complete analysis in Google Colab:
 
-[Open in Google Colab](YOUR_COLAB_LINK)
+[Open in Google Colab]([YOUR_COLAB_LINK](https://colab.research.google.com/drive/1RI7b9FgOnZNSo5h4vMQgmRMEDr2YCqSd?usp=sharing))
 
 ---
 
@@ -150,7 +150,7 @@ Angel Santamaria Galarza
 
 Operations Research | Supply Chain Optimization | Python
 
-[LinkedIn]([YOUR_LINKEDIN](https://www.linkedin.com/in/angel-santamaria-galarza-793980120/))
+(https://www.linkedin.com/in/angel-santamaria-galarza-793980120/))
 
 ## 📄 License
 
