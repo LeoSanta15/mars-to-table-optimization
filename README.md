@@ -150,7 +150,7 @@ Angel Santamaria Galarza
 
 Operations Research | Supply Chain Optimization | Python
 
-(https://www.linkedin.com/in/angel-santamaria-galarza-793980120/))
+(https://www.linkedin.com/in/angel-santamaria-galarza-793980120/)
 
 ## 📄 License
 
