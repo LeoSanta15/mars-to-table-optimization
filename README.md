@@ -1,157 +1,87 @@
-# 🚀 Mars to Table — Operations Research Optimization
+# Data — Mars to Table Optimization
 
-## MILP Optimization of a Food Production System for a Mars Mission
+## Primary dataset
 
-An Operations Research case study inspired by NASA's Mars to Table challenge.
+### `candidatos_mars_to_table.xlsx`
 
-The objective is to determine an optimal portfolio of crops and alternative
-protein sources that minimizes dependence on Earth while satisfying nutritional,
-water, land, production and biodiversity constraints.
+The main input workbook for the MILP model. Contains two sheets:
 
 ---
 
-## 🎯 Problem
+### Sheet: `Cultivos_Fotosinteticos`
 
-How can a crew produce enough food during a long-duration Mars mission while
-minimizing dependence on Earth?
+13 photosynthetic crop candidates. Data starts on row 4 (`header=3` in pandas).
 
-The model considers:
+| Column | Unit | Description |
+|--------|------|-------------|
+| `Candidato` | — | Species name |
+| `r_proteina_g_m2_d` | g·m⁻²·day⁻¹ | Protein yield per unit area |
+| `r_calorico_kcal_m2_d` | kcal·m⁻²·day⁻¹ | Caloric yield per unit area |
+| `a_i_m2_por_kg_comestible_dia` | m²·(kg·day)⁻¹ | Area required per unit production |
+| `Agua_L_m2_d` | L·m⁻²·day⁻¹ | Water use per unit area |
+| `Biomasa_comestible_gDM_m2_d` | g DM·m⁻²·day⁻¹ | Edible dry-matter yield per area |
+| `Ciclo_dias` | days | Growth cycle to first harvest |
+| `Proteina_pct_DM` | % | Protein as percentage of dry matter (used for consistency checks) |
 
-- 4 crew members
-- 16-week planning horizon
-- 13 photosynthetic crops
-- 5 alternative protein sources
-- Protein requirements
-- Calorie requirements
-- Maximum cultivation area
-- Maximum water availability
-- Alternative protein capacity
-- Crop maturation cycles
-- Minimum biodiversity requirements
-- Earth dependency
-
----
-
-## 🧠 Operations Research Approach
-
-The problem is formulated as a:
-
-**Mixed-Integer Linear Programming (MILP)** model.
-
-### Decision variables
-
-`x[i,t]` — production of candidate `i` during week `t`
-
-`y[i]` — binary variable indicating whether candidate `i`
-is included in the production portfolio.
-
-### Objective
-
-Minimize:
-
-Earth dependency + water consumption
-
-subject to nutritional, resource, production and biodiversity constraints.
+**Candidates included:**
+Wheat (*Triticum aestivum*), Soybean (*Glycine max*), Potato (*Solanum tuberosum*),
+Sweet potato (*Ipomoea batatas*), Lettuce (*Lactuca sativa*), Tomato (*Solanum lycopersicum*),
+Rice (*Oryza sativa*), Peanut (*Arachis hypogaea*), Quinoa (*Chenopodium quinoa*),
+Moringa (*Moringa oleifera*), Spirulina (*Arthrospira platensis*),
+Chlorella (*Chlorella vulgaris*), Duckweed (*Lemna minor*).
 
 ---
 
-## 🔬 Key OR Concepts
+### Sheet: `Proteinas_Alternativas`
 
-- Mixed-Integer Linear Programming
-- Portfolio optimization
-- Resource allocation
-- Capacity constraints
-- Multi-period planning
-- Trade-off analysis
-- Sensitivity analysis
-- Scenario analysis
-- Supply Chain Optimization
+5 alternative protein sources. Same header structure (`header=3`).
 
----
+| Column | Unit | Description |
+|--------|------|-------------|
+| `Candidato` | — | Species / product name |
+| `r_proteina_g_por_kg_producto` | g·kg⁻¹ | Protein per kg of product |
+| `Agua_L_por_kg_producto` | L·kg⁻¹ | Water use per kg of product |
+| `Ciclo_dias` | days | Growth/production cycle |
+| `Proteina_pct_producto` | % | Protein as % of product (consistency check) |
 
-## 📊 Diversity Trade-off
+**Note:** `Agua_L_por_kg_producto` is **NaN** for oyster mushroom. The model
+substitutes a default value of 1,500 L/kg with a warning. See
+`docs/assumptions.md` for the rationale.
 
-A key feature of the model is the parameter:
+**Note:** Caloric density (`kcal/kg`) is **not present** in this sheet. Values
+are supplied from literature in `src/data_validation.py` → `ALT_KCAL_PER_KG`.
 
-`K = minimum number of active species`
-
-This allows us to study the trade-off between:
-
-**Efficiency ↔ Resilience**
-
-Increasing biodiversity may require additional resources,
-but can potentially create a more resilient food-production system.
+**Candidates included:**
+Cricket (*Acheta domesticus*), Mealworm (*Tenebrio molitor*),
+Mycoprotein / Quorn (*Fusarium venenatum*),
+Oyster mushroom (*Pleurotus ostreatus*),
+Cultivated meat (in-vitro animal cells).
 
 ---
 
-## 💧 Water Analysis
+## Data provenance
 
-The model also evaluates:
+Nutritional and agronomic data for photosynthetic crops were compiled from:
+- NASA Advanced Life Support documentation
+- FAO crop composition tables
+- Published controlled-environment agriculture (CEA) studies
 
-- Gross water consumption
-- Candidate-specific recycling rates
-- Net water replenishment
-- Embedded water
-- Transpiration
-- Sensitivity to recycling efficiency
-
----
-
-## 🛠️ Technology
-
-Python  
-PuLP  
-CBC Solver  
-Pandas  
-Matplotlib  
-OpenPyXL  
-Google Colab
+Alternative protein data were compiled from:
+- FAO Nutritional Database
+- USDA FoodData Central
+- Oonincx et al. 2015 (*J. Insects as Food and Feed*)
+- Finke 2002 (*Zoo Biology*)
+- Post 2012 (*J. Science of Food and Agriculture*)
 
 ---
 
-## 📓 Notebook
+## Loading the data
 
-Run the complete analysis in Google Colab:
+```python
+from src.data_validation import load_and_validate_data
 
-[Open in Google Colab]([YOUR_COLAB_LINK](https://colab.research.google.com/drive/1RI7b9FgOnZNSo5h4vMQgmRMEDr2YCqSd?usp=sharing))
+crops, alt = load_and_validate_data("data/candidatos_mars_to_table.xlsx")
+```
 
----
-
-## 🌎 NASA Reference
-
-This project is inspired by NASA's Mars to Table challenge:
-
-https://www.nasa.gov/prizes-challenges-and-crowdsourcing/marstotable/
-
-This is an independent Operations Research case study and is
-not an official NASA model.
-
----
-
-## 🚀 Future Work
-
-Potential extensions include:
-
-- Stochastic Optimization
-- Robust Optimization
-- Monte Carlo simulation
-- Multi-objective optimization
-- Energy constraints
-- Crop failure scenarios
-- Inventory and resupply
-- Dynamic optimization
-- Reinforcement Learning
-
----
-
-## 👨‍💻 Author
-
-Angel Santamaria Galarza
-
-Operations Research | Supply Chain Optimization | Python
-
-(https://www.linkedin.com/in/angel-santamaria-galarza-793980120/)
-
-## 📄 License
-
-MIT License
+The function validates all fields, raises warnings for non-critical issues,
+and exits with a clear message if critical data is missing or invalid.
